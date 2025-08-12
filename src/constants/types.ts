@@ -1,3 +1,8 @@
+export interface User {
+  userId: string;
+  username: string;
+  role: string;
+}
 export interface AlbumModalProps {
   readonly open: boolean;
   readonly onClose: () => void;

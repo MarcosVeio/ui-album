@@ -39,20 +39,20 @@ export default function AlbumCard({
         display: "flex",
         flexDirection: "column",
       }}
-      onClick={() => onClick(album.albumId)}
+      onClick={() => onClick(album?.albumId)}
     >
       <CardMedia
         component="img"
         height="160"
-        image={album.coverImage.imgUrl || "/default-cover.jpg"}
-        alt={album.title}
+        image={album?.coverImage?.imgUrl || "/default-cover.jpg"}
+        alt={album?.title}
       />
       <CardContent sx={{ flexGrow: 1 }}>
         <Typography variant="h6" gutterBottom>
-          {album.title}
+          {album?.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {album.description}
+          {album?.description}
         </Typography>
       </CardContent>
       <CardActions

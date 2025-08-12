@@ -91,7 +91,7 @@ export default function AlbunsPage() {
       ) : (
         <Grid container spacing={3}>
           {albuns?.map((album) => (
-            <Grid key={album.albumId}>
+            <Grid key={album?.albumId}>
               <AlbumCard
                 album={album}
                 onClick={(id) => router.push(`/albuns/${id}`)}
