@@ -25,4 +25,5 @@ export interface Album {
   readonly title: string;
   readonly description: string;
   readonly coverImage: CoverImageProps;
+  readonly cover: string;
 }

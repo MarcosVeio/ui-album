@@ -8,7 +8,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { AlbumModalProps } from "../types";
+import { AlbumModalProps } from "@/constants/types";
 
 export default function AlbumModal({
   open,

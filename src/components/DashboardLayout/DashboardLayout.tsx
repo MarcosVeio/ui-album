@@ -2,55 +2,36 @@
 import React, { useState } from "react";
 import { useSession } from "@/hooks/useSession";
 import AppBar from "@mui/material/AppBar";
+import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import MailIcon from "@mui/icons-material/Mail";
 
 import Container from "@mui/material/Container";
 import ProfileMenu from "@/components/DashboardLayout/Fragments/ProfileMenu";
+import { useRouter, usePathname } from "next/navigation";
+import { DrawerContent } from "./Fragments/DrawerContent";
+import { MenuItems } from "./Constants/MenuItems";
+import { DashboardLayoutProps } from "./Constants/types";
 
 const drawerWidth = 240;
 
-export interface DashboardLayoutProps {
-  readonly children: React.ReactNode;
-  readonly title?: string;
-  readonly menuItems?: {
-    label: string;
-    icon?: React.ReactNode;
-    path: string;
-  }[];
-  readonly headerContent?: React.ReactNode;
-}
-
-import { useRouter, usePathname } from "next/navigation";
-export default function DashboardLayout(props: DashboardLayoutProps) {
-  const {
-    children,
-    title = "Tela inicial",
-    menuItems = [
-      { label: "Home", icon: <InboxIcon />, path: "/home" },
-      { label: "Fotos", icon: <MailIcon />, path: "/fotos" },
-      { label: "Álbuns", icon: <InboxIcon />, path: "/albuns" },
-      { label: "Configurações", icon: <MailIcon />, path: "/configuracoes" },
-    ],
-    headerContent,
-  } = props;
+export default function DashboardLayout(props: Readonly<DashboardLayoutProps>) {
   const router = useRouter();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { session, loading, error } = useSession();
+
+  const {
+    children,
+    title = "Tela inicial",
+    menuItems = MenuItems,
+    headerContent,
+  } = props;
 
   if (loading) {
     return (
@@ -64,6 +45,7 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
       </Box>
     );
   }
+
   if (error) {
     return (
       <Box
@@ -72,7 +54,9 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
         alignItems="center"
         minHeight="100vh"
       >
-        <Typography color="error">{error}</Typography>
+        <Box width={400}>
+          <Alert severity="error">{error}</Alert>
+        </Box>
       </Box>
     );
   }
@@ -80,34 +64,6 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
-  const drawer = (
-    <div>
-      <Typography variant="h5" align="center" sx={{ my: 2 }}>
-        Álbum Online
-      </Typography>
-      <Typography variant="subtitle1" align="center" sx={{ mb: 2 }}>
-        {session?.username || "Usuário"}
-      </Typography>
-      <Divider />
-      <List>
-        {menuItems.map((item) => {
-          const selected = pathname === item.path;
-          return (
-            <ListItem key={item.label} disablePadding>
-              <ListItemButton
-                selected={selected}
-                onClick={() => router.push(item.path)}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
-    </div>
-  );
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", background: "#f7fafd" }}>
@@ -118,6 +74,7 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
         }}
+        color="success"
       >
         <Toolbar>
           <IconButton
@@ -132,7 +89,6 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             {title}
           </Typography>
-          {/* Menu de perfil */}
           {session?.username && (
             <ProfileMenu
               onLogout={async () => {
@@ -150,7 +106,6 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
         aria-label="mailbox folders"
       >
-        {/* Drawer para mobile */}
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -164,9 +119,13 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
             },
           }}
         >
-          {drawer}
+          <DrawerContent
+            session={session}
+            menuItems={menuItems}
+            pathname={pathname}
+            router={router}
+          />
         </Drawer>
-        {/* Drawer para desktop */}
         <Drawer
           variant="permanent"
           sx={{
@@ -178,7 +137,12 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
           }}
           open
         >
-          {drawer}
+          <DrawerContent
+            session={session}
+            menuItems={menuItems}
+            pathname={pathname}
+            router={router}
+          />
         </Drawer>
       </Box>
       <Box
@@ -190,7 +154,16 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
         }}
       >
         <Toolbar />
-        <Container maxWidth="lg">{children}</Container>
+        <Container
+          sx={{
+            bgcolor: "#b9b9b95c",
+            borderRadius: 2,
+            p: 2,
+          }}
+          maxWidth="lg"
+        >
+          {children}
+        </Container>
       </Box>
     </Box>
   );

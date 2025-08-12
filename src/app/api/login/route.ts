@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       const contentType = apiRes.headers.get("content-type");
       if (contentType?.includes("application/json")) {
         const errData = await apiRes.json();
-        errorMsg = errData.error || errorMsg;
+        errorMsg = errData.message || errorMsg;
       } else {
         const errText = await apiRes.text();
         if (errText) errorMsg = errText;

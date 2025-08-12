@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import DashboardLayout from "@/components/DashboardLayout/DashboardLayout";
+import { AlbunsProvider } from "@/context/AlbunsContext";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -11,5 +12,9 @@ export default function DashboardRootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <DashboardLayout>{children}</DashboardLayout>;
+  return (
+    <AlbunsProvider>
+      <DashboardLayout>{children}</DashboardLayout>
+    </AlbunsProvider>
+  );
 }

@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useState } from "react";
+import Alert from "@mui/material/Alert";
 import { schema } from "./schema";
 
 type LoginForm = yup.InferType<typeof schema>;
@@ -118,9 +119,9 @@ export default function LoginPage() {
               autoComplete="current-password"
             />
             {error && (
-              <Typography color="error" mb={2} fontSize={14}>
-                {error}
-              </Typography>
+              <Box mb={2}>
+                <Alert severity="error">{error}</Alert>
+              </Box>
             )}
             <Button
               type="submit"

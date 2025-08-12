@@ -1,106 +1,70 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-import AlbumModal from "./Fragments/AlbumModal";
 import CircularProgress from "@mui/material/CircularProgress";
 import Tooltip from "@mui/material/Tooltip";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import { useRouter } from "next/navigation";
-import AlbumCard from "./Fragments/AlbumCard";
-import { Album } from "./types";
-import fetchWithAuth from "@/utils/fetchWithAuth";
+import { Album } from "@/constants/types";
+import AlbumModal from "./fragments/albumModal";
+import AlbumCard from "./fragments/albumCard";
+import { Divider } from "@mui/material";
+import { useAlbuns } from "@/context/AlbunsContext";
 
 export default function AlbunsPage() {
-  const [albuns, setAlbuns] = useState<Album[]>([]);
-  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editAlbum, setEditAlbum] = useState<Album | null>(null);
+  const {
+    albuns,
+    loading: loadingAlbuns,
+    error: albunsError,
+    createAlbum,
+    updateAlbum,
+    deleteAlbum,
+  } = useAlbuns();
   const router = useRouter();
 
-  // Buscar álbuns
-  useEffect(() => {
-    async function fetchAlbuns() {
-      setLoading(true);
-      try {
-        const res = await fetchWithAuth("/api/albuns");
-        const data = await res.json();
-        setAlbuns(data.albuns || []);
-      } catch {
-        setAlbuns([]);
-      }
-      setLoading(false);
-    }
-    fetchAlbuns();
-  }, []);
-
-  // Abrir modal para criar novo álbum
   const handleOpenModal = () => {
     setEditAlbum(null);
     setModalOpen(true);
   };
 
-  // Abrir modal para editar álbum
   const handleEditAlbum = (album: Album) => {
     setEditAlbum(album);
     setModalOpen(true);
   };
 
-  // Salvar/criar álbum
   const handleSaveAlbum = async (formData: {
     title: string;
     description: string;
     coverImage: string;
     file?: File | null;
   }) => {
-    const form = new FormData();
-    form.append("title", formData.title);
-    form.append("description", formData.description);
-    // Se for edição e não trocar a imagem, enviar coverImage (url/id), senão enviar o arquivo
-    if (formData.file) {
-      form.append("coverImage", formData.file);
-    } else if (formData.coverImage) {
-      form.append("coverImage", formData.coverImage);
-    }
     if (editAlbum) {
-      // Editar álbum
-      await fetchWithAuth(`/api/albuns/${editAlbum.albumId}`, {
-        method: "PUT",
-        body: form,
-      });
+      await updateAlbum(editAlbum.albumId, formData);
     } else {
-      // Criar álbum
-      await fetchWithAuth("/api/albuns", {
-        method: "POST",
-        body: form,
-      });
+      await createAlbum(formData);
     }
     setModalOpen(false);
     setEditAlbum(null);
-    // Recarregar álbuns
-    setLoading(true);
-    const res = await fetchWithAuth("/api/albuns");
-    const data = await res.json();
-    setAlbuns(data.albuns || []);
-    setLoading(false);
   };
 
-  // Deletar álbum
   const handleDeleteAlbum = async (id: string) => {
-    await fetchWithAuth(`/api/albuns/${id}`, { method: "DELETE" });
-    // Recarregar álbuns
-    setLoading(true);
-    const res = await fetchWithAuth("/api/albuns");
-    const data = await res.json();
-    setAlbuns(data.albuns || []);
-    setLoading(false);
+    await deleteAlbum(id);
   };
 
   return (
     <Box>
+      {albunsError && (
+        <Box mb={2}>
+          <Alert severity="error">{albunsError}</Alert>
+        </Box>
+      )}
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -114,7 +78,8 @@ export default function AlbunsPage() {
           </Fab>
         </Tooltip>
       </Stack>
-      {loading ? (
+      <Divider sx={{ mb: 10 }} />
+      {loadingAlbuns ? (
         <Box
           display="flex"
           justifyContent="center"
@@ -125,11 +90,11 @@ export default function AlbunsPage() {
         </Box>
       ) : (
         <Grid container spacing={3}>
-          {albuns.map((album) => (
+          {albuns?.map((album) => (
             <Grid key={album.albumId}>
               <AlbumCard
                 album={album}
-                onClick={(id) => router.push(`/album/${id}`)}
+                onClick={(id) => router.push(`/albuns/${id}`)}
                 onEdit={handleEditAlbum}
                 onDelete={handleDeleteAlbum}
               />
@@ -137,7 +102,6 @@ export default function AlbunsPage() {
           ))}
         </Grid>
       )}
-      {/* Modal de criação/edição */}
       <AlbumModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}

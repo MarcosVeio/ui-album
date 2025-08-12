@@ -15,10 +15,12 @@ export async function GET() {
     },
   });
   if (!res.ok) {
-    return NextResponse.json(
-      { error: "Falha ao buscar álbuns" },
-      { status: res.status }
-    );
+    let errorMsg = "Falha ao buscar álbuns";
+    try {
+      const err = await res.json();
+      errorMsg = err?.message || err?.error || errorMsg;
+    } catch {}
+    return NextResponse.json({ error: errorMsg }, { status: res.status });
   }
   const data = await res.json();
   return NextResponse.json({ albuns: data.albuns || data });
@@ -67,10 +69,12 @@ export async function POST(request: Request) {
     body: proxyForm,
   });
   if (!res.ok) {
-    return NextResponse.json(
-      { error: "Falha ao criar álbum" },
-      { status: res.status }
-    );
+    let errorMsg = "Falha ao criar álbum";
+    try {
+      const err = await res.json();
+      errorMsg = err?.message || err?.error || errorMsg;
+    } catch {}
+    return NextResponse.json({ error: errorMsg }, { status: res.status });
   }
   const data = await res.json();
   return NextResponse.json({ albuns: data.albuns || data });
