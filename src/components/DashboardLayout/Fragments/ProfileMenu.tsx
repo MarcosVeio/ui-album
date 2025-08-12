@@ -27,7 +27,9 @@ export default function ProfileMenu({ onLogout, userName }: ProfileMenuProps) {
     <Box>
       <Tooltip title="Meu perfil">
         <IconButton onClick={handleOpen} size="small" sx={{ ml: 2 }}>
-          <Avatar>{userName ? userName[0].toUpperCase() : "U"}</Avatar>
+          <Avatar sx={{ bgcolor: "#00509b" }}>
+            {userName ? userName[0].toUpperCase() : "U"}
+          </Avatar>
         </IconButton>
       </Tooltip>
       <Menu

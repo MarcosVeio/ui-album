@@ -18,6 +18,7 @@ import PhotoAlbumIcon from "@mui/icons-material/PhotoAlbum";
 import StarBorder from "@mui/icons-material/StarBorder";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useAlbuns } from "@/context/AlbunsContext";
+import ProfileMenu from "./ProfileMenu";
 
 interface DrawerProps {
   session: Session | null;
@@ -88,56 +89,83 @@ export const DrawerContent = ({
   };
 
   return (
-    <Box>
-      <Typography variant="h5" align="center" sx={{ my: 2 }}>
-        Álbum Online
-      </Typography>
-      <Typography variant="subtitle1" align="center" sx={{ mb: 2 }}>
-        {session?.username || "Usuário"}
-      </Typography>
-      <Divider />
-      <List>
-        {menuItems.map((item) => {
-          if (item.label === "Álbuns") {
+    <Box
+      display="flex"
+      flexDirection="column"
+      height="100%"
+      justifyContent="space-between"
+    >
+      <Box>
+        <Typography variant="h5" align="center" sx={{ my: 2 }}>
+          Álbum Online
+        </Typography>
+        <Divider />
+        <List>
+          {menuItems.map((item) => {
+            if (item.label === "Álbuns") {
+              return (
+                <React.Fragment key={item.label}>
+                  <ListItemButton
+                    onClick={handleAlbunsClick}
+                    selected={pathname === item.path}
+                  >
+                    <ListItemIcon>
+                      {item.icon || <PhotoAlbumIcon />}
+                    </ListItemIcon>
+                    <ListItemText primary={item.label} />
+                    {openAlbuns ? <ExpandLess /> : <ExpandMore />}
+                  </ListItemButton>
+                  <Collapse in={openAlbuns} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {albuns &&
+                        renderAlbunsList({
+                          albuns,
+                          loadingAlbuns,
+                          pathname,
+                          router,
+                        })}
+                    </List>
+                  </Collapse>
+                </React.Fragment>
+              );
+            }
+            // Itens normais
+            const selected = pathname === item.path;
             return (
-              <React.Fragment key={item.label}>
+              <ListItem key={item.label} disablePadding>
                 <ListItemButton
-                  onClick={handleAlbunsClick}
-                  selected={pathname === item.path}
+                  selected={selected}
+                  onClick={() => router.push(item.path)}
                 >
-                  <ListItemIcon>{item.icon || <PhotoAlbumIcon />}</ListItemIcon>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.label} />
-                  {openAlbuns ? <ExpandLess /> : <ExpandMore />}
                 </ListItemButton>
-                <Collapse in={openAlbuns} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    {albuns &&
-                      renderAlbunsList({
-                        albuns,
-                        loadingAlbuns,
-                        pathname,
-                        router,
-                      })}
-                  </List>
-                </Collapse>
-              </React.Fragment>
+              </ListItem>
             );
-          }
-          // Itens normais
-          const selected = pathname === item.path;
-          return (
-            <ListItem key={item.label} disablePadding>
-              <ListItemButton
-                selected={selected}
-                onClick={() => router.push(item.path)}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
+          })}
+        </List>
+      </Box>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        bgcolor="#f0f0f0"
+      >
+        <Typography variant="subtitle1" align="center" color="text.secondary">
+          {session?.username || "Usuário"}
+        </Typography>
+        <Box>
+          {session?.username && (
+            <ProfileMenu
+              onLogout={async () => {
+                await fetch("/api/logout", { method: "POST" });
+                router.push("/login");
+              }}
+              userName={session.username}
+            />
+          )}
+        </Box>
+      </Box>
     </Box>
   );
 };

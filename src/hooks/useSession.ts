@@ -3,6 +3,7 @@ import fetchWithAuth from "@/utils/fetchWithAuth";
 
 export interface Session {
   username: string;
+  role: string;
 }
 
 export function useSession() {

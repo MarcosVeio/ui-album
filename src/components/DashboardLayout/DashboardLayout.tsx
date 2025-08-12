@@ -15,7 +15,8 @@ import Container from "@mui/material/Container";
 import ProfileMenu from "@/components/DashboardLayout/Fragments/ProfileMenu";
 import { useRouter, usePathname } from "next/navigation";
 import { DrawerContent } from "./Fragments/DrawerContent";
-import { MenuItems } from "./Constants/MenuItems";
+import { MenuItems as BaseMenuItems } from "./Constants/MenuItems";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import { DashboardLayoutProps } from "./Constants/types";
 
 const drawerWidth = 240;
@@ -26,12 +27,20 @@ export default function DashboardLayout(props: Readonly<DashboardLayoutProps>) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { session, loading, error } = useSession();
 
-  const {
-    children,
-    title = "Tela inicial",
-    menuItems = MenuItems,
-    headerContent,
-  } = props;
+  const menuItems = [
+    ...BaseMenuItems,
+    ...(session?.role === "ADMIN"
+      ? [
+          {
+            label: "Gerenciar Usuários",
+            icon: <GroupAddIcon />,
+            path: "/config",
+          },
+        ]
+      : []),
+  ];
+
+  const { children, title = "Tela inicial", headerContent } = props;
 
   if (loading) {
     return (
@@ -68,39 +77,6 @@ export default function DashboardLayout(props: Readonly<DashboardLayoutProps>) {
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", background: "#f7fafd" }}>
       <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-        }}
-        color="success"
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            {title}
-          </Typography>
-          {session?.username && (
-            <ProfileMenu
-              onLogout={async () => {
-                await fetch("/api/logout", { method: "POST" });
-                router.push("/login");
-              }}
-              userName={session.username}
-            />
-          )}
-          {headerContent}
-        </Toolbar>
-      </AppBar>
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
@@ -153,7 +129,6 @@ export default function DashboardLayout(props: Readonly<DashboardLayoutProps>) {
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >
-        <Toolbar />
         <Container
           sx={{
             bgcolor: "#b9b9b95c",
