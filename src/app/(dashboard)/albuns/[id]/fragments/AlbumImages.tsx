@@ -6,7 +6,7 @@ import {
   Skeleton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Image from "next/image";
+import { AlbumImageWithLoading } from "@/components/AlbumImageWithLoading";
 
 import { ImageByAlbumId } from "@/constants/types";
 
@@ -49,57 +49,58 @@ export function AlbumImages({
   }
   return (
     <Box display="flex" mt={10} justifyContent="center" flexWrap="wrap" gap={4}>
-      {images.map((img) => (
-        <Box
-          key={img.imageId}
-          position="relative"
-          borderRadius={2}
-          overflow="hidden"
-          boxShadow={2}
-        >
-          <button
-            type="button"
-            aria-label="Abrir imagem em tela cheia"
-            onClick={() => onOpenModal(img.imgUrl)}
-            style={{
-              width: 180,
-              height: 180,
-              padding: 0,
-              border: "none",
-              background: "none",
-              cursor: "pointer",
-              display: "block",
-            }}
+      {images.map((img) => {
+        return (
+          <Box
+            key={img.imageId}
+            position="relative"
+            borderRadius={2}
+            overflow="hidden"
+            boxShadow={2}
           >
-            <Image
-              src={img.imgUrl}
-              alt="Imagem do álbum"
-              width={180}
-              height={180}
-              style={{ objectFit: "cover", width: "100%", height: "100%" }}
-              sizes="180px"
-              priority={false}
-            />
-          </button>
-          <IconButton
-            size="small"
-            onClick={() => onDelete(img.imageId)}
-            sx={{
-              position: "absolute",
-              top: 4,
-              right: 4,
-              bgcolor: "rgba(255,255,255,0.7)",
-            }}
-            disabled={deletingId === img.imageId}
-          >
-            {deletingId === img.imageId ? (
-              <CircularProgress size={20} />
-            ) : (
-              <DeleteIcon fontSize="small" />
-            )}
-          </IconButton>
-        </Box>
-      ))}
+            <button
+              type="button"
+              aria-label="Abrir imagem em tela cheia"
+              onClick={() => onOpenModal(img.imgUrl)}
+              style={{
+                width: 180,
+                height: 180,
+                padding: 0,
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                display: "block",
+              }}
+            >
+              <AlbumImageWithLoading
+                src={img.imgUrl}
+                alt="Imagem do álbum"
+                width={180}
+                height={180}
+                sizes="180px"
+                priority={false}
+              />
+            </button>
+            <IconButton
+              size="small"
+              onClick={() => onDelete(img.imageId)}
+              sx={{
+                position: "absolute",
+                top: 4,
+                right: 4,
+                bgcolor: "rgba(255,255,255,0.7)",
+              }}
+              disabled={deletingId === img.imageId}
+            >
+              {deletingId === img.imageId ? (
+                <CircularProgress size={20} />
+              ) : (
+                <DeleteIcon fontSize="small" />
+              )}
+            </IconButton>
+          </Box>
+        );
+      })}
     </Box>
   );
 }

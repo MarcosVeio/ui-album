@@ -7,6 +7,7 @@ import {
   Stack,
   TextField,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import { AlbumModalProps } from "@/constants/types";
 
@@ -36,10 +37,10 @@ export default function AlbumModal({
     setLoading(false);
   }, [initialData, open]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setLoading(true);
     try {
-      onSave({ ...form, file });
+      await onSave({ ...form, file });
     } finally {
       setLoading(false);
     }
@@ -100,7 +101,12 @@ export default function AlbumModal({
         <Button onClick={onClose} disabled={loading}>
           Cancelar
         </Button>
-        <Button onClick={handleSave} variant="contained" disabled={loading}>
+        <Button
+          onClick={handleSave}
+          variant="contained"
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={18} /> : undefined}
+        >
           {saveButtonText}
         </Button>
       </DialogActions>

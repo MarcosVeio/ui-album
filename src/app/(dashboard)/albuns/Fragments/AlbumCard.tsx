@@ -1,6 +1,7 @@
 import React from "react";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
+import { AlbumImageWithLoading } from "@/components/AlbumImageWithLoading";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Typography from "@mui/material/Typography";
@@ -41,11 +42,13 @@ export default function AlbumCard({
       }}
       onClick={() => onClick(album?.albumId)}
     >
-      <CardMedia
-        component="img"
-        height="160"
-        image={album?.coverImage?.imgUrl || "/default-cover.jpg"}
+      <AlbumImageWithLoading
+        src={album?.coverImage?.imgUrl || "/default-cover.jpg"}
         alt={album?.title}
+        width={320}
+        height={160}
+        style={{ width: "100%", height: 160, objectFit: "cover" }}
+        priority={false}
       />
       <CardContent sx={{ flexGrow: 1 }}>
         <Typography variant="h6" gutterBottom>

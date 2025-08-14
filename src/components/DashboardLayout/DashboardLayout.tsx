@@ -1,25 +1,20 @@
 "use client";
 import React, { useState } from "react";
 import { useSession } from "@/hooks/useSession";
-import AppBar from "@mui/material/AppBar";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
 import Container from "@mui/material/Container";
-import ProfileMenu from "@/components/DashboardLayout/Fragments/ProfileMenu";
 import { useRouter, usePathname } from "next/navigation";
-import { DrawerContent } from "./Fragments/DrawerContent";
+import { DrawerContent } from "./Fragments/DrawerContent/DrawerContent";
 import { MenuItems as BaseMenuItems } from "./Constants/MenuItems";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import { DashboardLayoutProps } from "./Constants/types";
 
-const drawerWidth = 240;
+const drawerWidth = 270;
 
 export default function DashboardLayout(props: Readonly<DashboardLayoutProps>) {
   const router = useRouter();
@@ -40,7 +35,7 @@ export default function DashboardLayout(props: Readonly<DashboardLayoutProps>) {
       : []),
   ];
 
-  const { children, title = "Tela inicial", headerContent } = props;
+  const { children } = props;
 
   if (loading) {
     return (

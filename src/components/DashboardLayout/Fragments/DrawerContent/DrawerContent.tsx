@@ -15,10 +15,11 @@ import {
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import PhotoAlbumIcon from "@mui/icons-material/PhotoAlbum";
-import StarBorder from "@mui/icons-material/StarBorder";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useAlbuns } from "@/context/AlbunsContext";
-import ProfileMenu from "./ProfileMenu";
+import ProfileMenu from "../ProfileMenu/ProfileMenu";
+import { CustomListItem, CustomListItemIcon } from "./styles";
 
 interface DrawerProps {
   session: Session | null;
@@ -44,30 +45,34 @@ function renderAlbunsList({
 }) {
   if (loadingAlbuns) {
     return (
-      <ListItemButton sx={{ pl: 4 }} disabled>
+      <CustomListItem sx={{ pl: 4 }} disabled>
         <CircularProgress size={18} sx={{ mr: 2 }} />
         <ListItemText primary="Carregando..." />
-      </ListItemButton>
+      </CustomListItem>
     );
   } else if (albuns?.length === 0) {
     return (
-      <ListItemButton sx={{ pl: 4 }} disabled>
+      <CustomListItem sx={{ pl: 4 }} disabled>
         <ListItemText primary="Nenhum álbum" />
-      </ListItemButton>
+      </CustomListItem>
     );
   } else {
     return albuns?.map((album) => (
-      <ListItemButton
+      <CustomListItem
         key={album.albumId}
         sx={{ pl: 4 }}
         selected={pathname === `/albuns/${album.albumId}`}
         onClick={() => router.push(`/albuns/${album.albumId}`)}
       >
-        <ListItemIcon>
-          <StarBorder />
-        </ListItemIcon>
+        <CustomListItemIcon>
+          <CustomListItemIcon
+            selected={pathname === `/albuns/${album.albumId}`}
+          >
+            <InsertPhotoIcon />
+          </CustomListItemIcon>
+        </CustomListItemIcon>
         <ListItemText primary={album.title} />
-      </ListItemButton>
+      </CustomListItem>
     ));
   }
 }
@@ -96,7 +101,7 @@ export const DrawerContent = ({
       justifyContent="space-between"
     >
       <Box>
-        <Typography variant="h5" align="center" sx={{ my: 2 }}>
+        <Typography variant="h4" align="center" sx={{ my: 2 }}>
           Álbum Online
         </Typography>
         <Divider />
@@ -105,41 +110,46 @@ export const DrawerContent = ({
             if (item.label === "Álbuns") {
               return (
                 <React.Fragment key={item.label}>
-                  <ListItemButton
-                    onClick={handleAlbunsClick}
-                    selected={pathname === item.path}
-                  >
-                    <ListItemIcon>
-                      {item.icon || <PhotoAlbumIcon />}
-                    </ListItemIcon>
-                    <ListItemText primary={item.label} />
-                    {openAlbuns ? <ExpandLess /> : <ExpandMore />}
-                  </ListItemButton>
-                  <Collapse in={openAlbuns} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {albuns &&
-                        renderAlbunsList({
-                          albuns,
-                          loadingAlbuns,
-                          pathname,
-                          router,
-                        })}
-                    </List>
-                  </Collapse>
+                  <ListItem>
+                    <Box width="100%">
+                      <CustomListItem
+                        onClick={handleAlbunsClick}
+                        selected={pathname === item.path}
+                      >
+                        <CustomListItemIcon selected={pathname === item.path}>
+                          {item.icon || <PhotoAlbumIcon />}
+                        </CustomListItemIcon>
+                        <ListItemText primary={item.label} />
+                        {openAlbuns ? <ExpandLess /> : <ExpandMore />}
+                      </CustomListItem>
+                      <Collapse in={openAlbuns} timeout="auto" unmountOnExit>
+                        <List component="div">
+                          {albuns &&
+                            renderAlbunsList({
+                              albuns,
+                              loadingAlbuns,
+                              pathname,
+                              router,
+                            })}
+                        </List>
+                      </Collapse>
+                    </Box>
+                  </ListItem>
                 </React.Fragment>
               );
             }
-            // Itens normais
             const selected = pathname === item.path;
             return (
-              <ListItem key={item.label} disablePadding>
-                <ListItemButton
+              <ListItem key={item.label}>
+                <CustomListItem
                   selected={selected}
                   onClick={() => router.push(item.path)}
                 >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <CustomListItemIcon selected={selected}>
+                    {item.icon}
+                  </CustomListItemIcon>
                   <ListItemText primary={item.label} />
-                </ListItemButton>
+                </CustomListItem>
               </ListItem>
             );
           })}

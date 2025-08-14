@@ -3,9 +3,9 @@ import * as React from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
+import { CustomAvatar } from "./styles";
 
 interface ProfileMenuProps {
   onLogout: () => void;
@@ -26,10 +26,10 @@ export default function ProfileMenu({ onLogout, userName }: ProfileMenuProps) {
   return (
     <Box>
       <Tooltip title="Meu perfil">
-        <IconButton onClick={handleOpen} size="small" sx={{ ml: 2 }}>
-          <Avatar sx={{ bgcolor: "#00509b" }}>
+        <IconButton onClick={handleOpen} size="large">
+          <CustomAvatar>
             {userName ? userName[0].toUpperCase() : "U"}
-          </Avatar>
+          </CustomAvatar>
         </IconButton>
       </Tooltip>
       <Menu
@@ -37,10 +37,7 @@ export default function ProfileMenu({ onLogout, userName }: ProfileMenuProps) {
         open={open}
         onClose={handleClose}
         onClick={handleClose}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem disabled>{userName || "Usuário"}</MenuItem>
         <MenuItem onClick={handleClose}>Meu Perfil</MenuItem>
         <MenuItem onClick={onLogout}>Logout</MenuItem>
       </Menu>
