@@ -1,30 +1,27 @@
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+
 export async function POST(request: Request) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-  if (!accessToken) {
-    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
-  }
   const { username, password } = await request.json();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const res = await fetch(`${apiUrl}api/users`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ username, password }),
   });
-  const data = await res.json();
+  let data = null;
+  const text = await res.text();
+  data = text ? JSON.parse(text) : {};
   if (!res.ok) {
     return NextResponse.json(
-      { error: data.error || "Erro ao criar usuário" },
+      { error: data?.message || "Erro ao criar usuário" },
       { status: res.status }
     );
   }
   return NextResponse.json(data);
 }
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
 export async function GET() {
   const cookieStore = await cookies();

@@ -9,8 +9,6 @@ export async function GET() {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
 
-  console.log("[api/me] accessToken:", accessToken);
-
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const res = await fetch(`${apiUrl}api/users/me`, {
     headers: {

@@ -37,6 +37,7 @@ export default function AlbumCard({
       sx={{
         cursor: "pointer",
         height: "100%",
+        width: "350px",
         display: "flex",
         flexDirection: "column",
       }}

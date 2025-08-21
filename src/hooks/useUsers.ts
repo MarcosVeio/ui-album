@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { User } from "@/constants/types";
+import { RegisterFormProps } from "@/app/login/fragments/RegisterForm/registerForm";
 
 interface RoleFromApi {
   id: number;
@@ -39,7 +40,7 @@ export function useUsers() {
   }, []);
 
   const createUser = useCallback(
-    async (username: string, password: string) => {
+    async (dataForm: RegisterFormProps) => {
       setError(null);
       setSuccess(null);
       setLoading(true);
@@ -47,15 +48,15 @@ export function useUsers() {
         const res = await fetch("/api/users", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password }),
+          body: JSON.stringify(dataForm),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Erro ao criar usuário");
         setSuccess("Usuário criado com sucesso!");
-        await fetchUsers();
       } catch (err: unknown) {
         setError((err as Error).message || "Erro ao criar usuário");
       } finally {
+        await fetchUsers();
         setLoading(false);
       }
     },
