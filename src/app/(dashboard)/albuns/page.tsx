@@ -13,10 +13,12 @@ import { useRouter } from "next/navigation";
 import { Album } from "@/constants/types";
 import AlbumModal from "./fragments/albumModal";
 import AlbumCard from "./fragments/albumCard";
-import { Divider } from "@mui/material";
+import { Divider, useTheme } from "@mui/material";
 import { useAlbuns } from "@/context/AlbunsContext";
+import Image from "next/image";
 
 export default function AlbunsPage() {
+  const theme = useTheme();
   const [modalOpen, setModalOpen] = useState(false);
   const [editAlbum, setEditAlbum] = useState<Album | null>(null);
   const {
@@ -70,8 +72,11 @@ export default function AlbunsPage() {
         justifyContent="space-between"
         alignItems="center"
         mb={3}
+        paddingX={5}
       >
-        <Typography variant="h4">Álbuns</Typography>
+        <Typography variant="h4" color={`${theme.palette.grey[800]}`}>
+          Álbuns
+        </Typography>
         <Tooltip title="Novo Álbum">
           <Fab color="primary" onClick={handleOpenModal} size="medium">
             <AddIcon />
@@ -79,7 +84,7 @@ export default function AlbunsPage() {
         </Tooltip>
       </Stack>
       <Divider sx={{ mb: 10 }} />
-      {loadingAlbuns ? (
+      {loadingAlbuns && (
         <Box
           display="flex"
           justifyContent="center"
@@ -88,20 +93,40 @@ export default function AlbunsPage() {
         >
           <CircularProgress />
         </Box>
-      ) : (
-        <Grid container spacing={3}>
-          {albuns?.map((album) => (
-            <Grid key={album?.albumId}>
-              <AlbumCard
-                album={album}
-                onClick={(id) => router.push(`/albuns/${id}`)}
-                onEdit={handleEditAlbum}
-                onDelete={handleDeleteAlbum}
-              />
-            </Grid>
-          ))}
-        </Grid>
       )}
+      <Grid container spacing={3}>
+        {albuns?.length === 0 && !loadingAlbuns && (
+          <Grid
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            width="100%"
+            flexDirection="column"
+          >
+            <Typography variant="overline" color="text.secondary">
+              Nenhum álbum encontrado.
+            </Typography>
+            <Image
+              src="/empty.svg"
+              alt="Ilustração Login"
+              width={400}
+              height={400}
+              style={{ objectFit: "revert" }}
+              priority
+            />
+          </Grid>
+        )}
+        {albuns?.map((album) => (
+          <Grid key={album?.albumId}>
+            <AlbumCard
+              album={album}
+              onClick={(id) => router.push(`/albuns/${id}`)}
+              onEdit={handleEditAlbum}
+              onDelete={handleDeleteAlbum}
+            />
+          </Grid>
+        ))}
+      </Grid>
       <AlbumModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}

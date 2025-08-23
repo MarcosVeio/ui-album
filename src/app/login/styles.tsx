@@ -12,13 +12,14 @@ export const LoginIllustrationBox = styled(Box)(() => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  width: "50%",
+  width: "70%",
+  background: "linear-gradient(90deg, #29517e 40%, #6188cf 100%)",
 }));
 
-export const LoginFormBox = styled(Box)(() => ({
-  flex: 1,
+export const SignFormBox = styled(Box)(() => ({
+  flex: 0.8,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  background: "linear-gradient(90deg, #fff 0%, #888888 100%)",
+  flexDirection: "column",
 }));

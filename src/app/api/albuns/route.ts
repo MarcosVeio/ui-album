@@ -27,13 +27,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  // Recebe multipart/form-data
   const form = await request.formData();
   const title = form.get("title");
   const description = form.get("description");
   const coverImage = form.get("coverImage");
 
-  // Validação manual (zod não suporta File no backend)
   if (!title || typeof title !== "string" || !title.trim()) {
     return NextResponse.json({ error: "Título obrigatório" }, { status: 400 });
   }
@@ -43,7 +41,6 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
-  // coverImage pode ser File ou string (caso edição sem troca de imagem)
   if (!coverImage || (typeof coverImage === "string" && !coverImage.trim())) {
     return NextResponse.json({ error: "Imagem obrigatória" }, { status: 400 });
   }
@@ -57,7 +54,12 @@ export async function POST(request: Request) {
   const proxyForm = new FormData();
   proxyForm.append("title", title);
   proxyForm.append("description", description);
-  if (coverImage instanceof File || typeof coverImage === "string") {
+  if (
+    typeof coverImage === "string" ||
+    (coverImage &&
+      typeof coverImage === "object" &&
+      typeof coverImage.arrayBuffer === "function")
+  ) {
     proxyForm.append("coverImage", coverImage);
   }
 

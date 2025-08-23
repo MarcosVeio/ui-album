@@ -70,6 +70,7 @@ export const AlbunsProvider: React.FC<{ children: React.ReactNode }> = ({
       coverImage: string;
       file?: File | null;
     }) => {
+      setLoading(true);
       const form = new FormData();
       form.append("title", formData.title);
       form.append("description", formData.description);
@@ -78,11 +79,17 @@ export const AlbunsProvider: React.FC<{ children: React.ReactNode }> = ({
       } else if (formData.coverImage) {
         form.append("coverImage", formData.coverImage);
       }
-      await fetchWithAuth("/api/albuns", {
-        method: "POST",
-        body: form,
-      });
+      try {
+        await fetchWithAuth("/api/albuns", {
+          method: "POST",
+          body: form,
+        });
+        setError(null);
+      } catch {
+        setError("Erro ao criar álbum");
+      }
       await refetch();
+      setLoading(false);
     },
     [refetch]
   );
@@ -116,8 +123,15 @@ export const AlbunsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const deleteAlbum = useCallback(
     async (albumId: string) => {
-      await fetchWithAuth(`/api/albuns/${albumId}`, { method: "DELETE" });
+      setLoading(true);
+      try {
+        await fetchWithAuth(`/api/albuns/${albumId}`, { method: "DELETE" });
+        setError(null);
+      } catch {
+        setError("Erro ao deletar álbum");
+      }
       await refetch();
+      setLoading(false);
     },
     [refetch]
   );

@@ -121,6 +121,7 @@ export default function DashboardLayout(props: Readonly<DashboardLayoutProps>) {
         sx={{
           flexGrow: 1,
           p: 3,
+          mt: 5,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >

@@ -3,19 +3,16 @@ import { useRouter } from "next/navigation";
 import { login, createUser } from "./actions";
 import Image from "next/image";
 import { useState } from "react";
-import LoginForm, { LoginFormProps } from "./fragments/LoginForm/loginForm";
-import RegisterForm, {
-  RegisterFormProps,
-} from "./fragments/RegisterForm/registerForm";
-import TabPanelComponent from "./fragments/TabPanel";
-import { LoginContainer, LoginFormBox, LoginIllustrationBox } from "./styles";
+import LoginForm, { SignFormProps } from "./fragments/SignForm/signForm";
+import { Typography } from "@mui/material";
+import { LoginContainer, SignFormBox, LoginIllustrationBox } from "./styles";
 
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const onSubmit = async (data: LoginFormProps) => {
+  const onSubmit = async (data: SignFormProps) => {
     setIsLoading(true);
     setError("");
     try {
@@ -32,7 +29,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleSubmitRegisterUser = async (data: RegisterFormProps) => {
+  const handleSubmitRegisterUser = async (data: SignFormProps) => {
     const { username, password } = data;
     setIsLoading(true);
     setError("");
@@ -54,31 +51,27 @@ export default function LoginPage() {
     <LoginContainer>
       <LoginIllustrationBox>
         <Image
-          src="/login-illustration.png"
+          src="/album.svg"
           alt="Ilustração Login"
           width={800}
-          height={600}
+          height={800}
           priority
         />
       </LoginIllustrationBox>
-      <LoginFormBox>
-        <TabPanelComponent
-          loginForm={
-            <LoginForm
-              onSubmit={onSubmit}
-              isLoading={isLoading}
-              error={error}
-            />
-          }
-          registerForm={
-            <RegisterForm
-              onSave={handleSubmitRegisterUser}
-              isLoading={isLoading}
-              error={error}
-            />
-          }
+      <SignFormBox>
+        <Typography variant="h2" fontWeight={700} color="primary">
+          Bem-vindo!
+        </Typography>
+        <Typography color="#2d3a4a90" variant="subtitle2">
+          Acesse ou crie sua conta para continuar
+        </Typography>
+        <LoginForm
+          onSubmitSignIn={onSubmit}
+          onSubmitSignUp={handleSubmitRegisterUser}
+          isLoading={isLoading}
+          error={error}
         />
-      </LoginFormBox>
+      </SignFormBox>
     </LoginContainer>
   );
 }
