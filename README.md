@@ -35,7 +35,9 @@
 
 ### Exemplo do projeto rodando
 
-![Album Online - Dashboard](public/screenshot.png)
+![Album Online - Dashboard](public/loginScreenshot.png)
+
+![Album Online - Dashboard](public/albumScreenshot.png)
 
 ---
 
